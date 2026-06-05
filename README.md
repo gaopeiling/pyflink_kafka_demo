@@ -23,7 +23,7 @@
 - [参考资源](#参考资源)
 ---
 
-## 📋 项目简介
+## 项目简介
 
 本项目构建了一个**生产级别的实时数据处理管道**，模拟股票Tick行情数据，通过Kafka传输，使用Apache Flink进行流式计算（1分钟K线聚合），最终将结果持久化到MySQL。
 
@@ -63,7 +63,7 @@ flowchart TD
 ```
 ---
 
-## 🚀 技术栈
+## 技术栈
 
 | 层级 | 技术 | 版本 | 说明 |
 |------|------|------|------|
@@ -75,7 +75,7 @@ flowchart TD
 
 ---
 
-## 📁 项目结构
+## 项目结构
 ```text
 pyflink_kafka_demo/
 ├── .venv/                              # Python虚拟环境
@@ -96,7 +96,7 @@ pyflink_kafka_demo/
 ```
 ---
 
-## 🏃 快速开始
+## 快速开始
 
 ### 1. 环境要求
 
@@ -146,7 +146,7 @@ docker exec mysql mysql -uroot -proot123 -e "USE stock_db; SELECT * FROM kline_1
 stop-all.bat
 ```
 ---
-## 📊 核心代码说明
+## 核心代码
 ### 1. Flink Table API 实现K线聚合
 ```python
 # 1分钟滚动窗口K线计算
@@ -184,7 +184,7 @@ consumer = KafkaConsumer(
 )
 ```
 ---
-## 📈 数据流示意
+## 数据流说明
 ```text
 输入数据 (stock_tick_raw)
 ┌─────────────────────────────────────────┐
@@ -203,7 +203,7 @@ consumer = KafkaConsumer(
 └─────────────────────────────────────────┘
 ```
 ---
-## 🛠️ 常见问题
+## 常见问题
 ### Q: Kafka容器无法启动？
 ```bash
 #清理数据卷后重启
@@ -226,7 +226,7 @@ docker exec kafka kafka-console-consumer --topic kline_result --bootstrap-server
 ```
 
 ---
-## 📝 项目亮点
+## 项目亮点
 | 步骤 | 亮点 | 说明 |
 | :---: | :--- | :--- |
 | 1 | 🎯 真实业务 | 模拟金融领域K线计算，贴近生产场景 |
@@ -236,15 +236,17 @@ docker exec kafka kafka-console-consumer --topic kline_result --bootstrap-server
 | 5 | 📊 数据完整 | 从生产到消费，覆盖数据全生命周期 |
 
 ---
-## 📄 License
+## License
 MIT License © 2026 Gao Peiling
-
----
-## 📧 联系方式
-如有问题，欢迎交流！
 
 ---
 ## 参考资源
 [Apache Flink 官方文档](https://flink.apache.org/)
+
 [PyFlink 文档](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/python/overview/)
+
 [Kafka 文档](https://kafka.apache.org/43/getting-started/introduction/)
+
+---
+## 联系方式
+如有问题，欢迎交流！

@@ -109,7 +109,6 @@ pyflink_kafka_demo/
 │   └── stop-all.bat
 ├── config/                             # 配置文件
 │   └── docker-compose.yml
-├── init.sql
 ├── LICENSE
 └── README.md
 ```

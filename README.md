@@ -1,10 +1,14 @@
 # Flink + Kafka + MySQL 实时股票K线计算系统
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![Flink](https://img.shields.io/badge/Flink-1.18-orange.svg)](https://flink.apache.org/)
 [![Kafka](https://img.shields.io/badge/Kafka-7.4-black.svg)](https://kafka.apache.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://mysql.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+[![GitHub](https://img.shields.io/badge/GitHub-gaopeiling/pyflink_kafka_demo-181717?logo=github)](https://github.com/gaopeiling/pyflink_kafka_demo)
+
+---
 
 ## 目录
 

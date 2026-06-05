@@ -2,102 +2,142 @@
 
 一个基于 PyFlink、Kafka 和 MySQL 的实时股票行情处理系统，实现1分钟K线聚合计算。
 
+# Flink + Kafka + MySQL 实时股票K线计算系统
+
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org/)
+[![Flink](https://img.shields.io/badge/Flink-1.18-orange.svg)](https://flink.apache.org/)
+[![Kafka](https://img.shields.io/badge/Kafka-7.4-black.svg)](https://kafka.apache.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://mysql.com/)
+
+## 📋 目录
+
+- [项目简介](#项目简介)
+- [系统架构](#系统架构)
+- [技术栈](#技术栈)
+- [快速开始](#快速开始)
+- [核心代码](#核心代码)
+- [数据流说明](#数据流说明)
+- [常见问题](#常见问题)
+- [项目亮点](#项目亮点)
+- [参考资源](#参考资源)
 ---
 
 ## 📋 项目简介
 
-本项目构建了一个完整的实时数据管道，模拟股票行情数据，通过 Kafka 传输，使用 Flink 进行流式计算（1分钟K线聚合），最终将结果存储到 MySQL。
+本项目构建了一个**生产级别的实时数据处理管道**，模拟股票Tick行情数据，通过Kafka传输，使用Apache Flink进行流式计算（1分钟K线聚合），最终将结果持久化到MySQL。
 
-### 架构图
+### 适用场景
+
+- 金融领域实时行情分析
+- 物联网设备数据聚合
+- 实时监控告警系统
+- 学习Flink + Kafka实战
+
+---
+
+## 系统架构
 ```mermaid
 flowchart TD
-    A[producer.py<br/>模拟股票Tick数据] --> B[Kafka<br/>Topic: stock_tick_raw]
-    B --> C[flink_job.py<br/>1分钟K线聚合 Table API]
-    C --> D[Kafka<br/>Topic: kline_result]
-    D --> E[mysql_consumer<br/>写入MySQL]
-    E --> F[MySQL<br/>Table: kline_1min]
+    subgraph A [数据生产层]
+        P[producer.py<br/>模拟5只股票Tick数据]
+    end
+
+    subgraph B [消息队列层]
+        K1[(Kafka Topic<br/>stock_tick_raw<br/>3 partitions)]
+    end
+
+    subgraph C [流计算层]
+        F[Flink Table API<br/>1分钟滚动窗口 → K线聚合 OHLCV]
+    end
+
+    subgraph D [消息队列层]
+        K2[(Kafka Topic<br/>kline_result<br/>3 partitions)]
+    end
+
+    subgraph E [数据存储层]
+        M[mysql_consumer.py → MySQL<br/>表: kline_1min]
+    end
+
+    P --> K1 --> F --> K2 --> M
 ```
 ---
 
 ## 🚀 技术栈
 
-| 组件 | 技术 | 版本 |
-|------|------|------|
-| 流计算引擎 | Apache Flink (PyFlink) | 1.18.0 |
-| 消息队列 | Apache Kafka (Confluent) | 7.4.0 |
-| 数据库 | MySQL | 8.0 |
-| 容器管理 | Docker / Docker Compose | - |
-| 编程语言 | Python | 3.10+ |
+| 层级 | 技术 | 版本 | 说明 |
+|------|------|------|------|
+| 流计算 | Apache Flink (PyFlink) | 1.18.0 | 核心计算引擎 |
+| 消息队列 | Apache Kafka | 7.4.0 | 数据总线 |
+| 存储 | MySQL | 8.0 | 结果持久化 |
+| 容器 | Docker / Docker Compose | - | 环境编排 |
+| 语言 | Python | 3.10+ | 业务逻辑 |
 
 ---
 
 ## 📁 项目结构
 ```text
 pyflink_kafka_demo/
-├── .venv/                          # Python虚拟环境
+├── .venv/                              # Python虚拟环境
 ├── libs/
-│   └── flink-sql-connector-kafka-3.2.0-1.18.jar  # Kafka连接器
-├── docker-compose.yml              # Docker编排配置
-├── flink_job.py                    # Flink作业 (核心)
-├── producer.py                     # 数据生产者
-├── mysql_consumer.py               # MySQL消费者
-├── init.sql                        # MySQL初始化脚本
-├── start-all.bat                   # 一键启动脚本
-└── stop-all.bat                    # 一键停止脚本
+│   └── flink-sql-connector-kafka-3.2.0-1.18.jar
+├── src/                                # 源代码目录
+│   ├── flink_job.py
+│   ├── producer.py
+│   └── mysql_consumer.py
+├── scripts/                            # 脚本目录
+│   ├── start-all.bat
+│   └── stop-all.bat
+├── config/                             # 配置文件
+│   └── docker-compose.yml
+├── init.sql
+├── LICENSE
+└── README.md
 ```
 ---
 
-## ⚙️ 环境准备
+## 🏃 快速开始
 
-### 1. 基础要求
-
-| 软件 | 版本要求 |
-|------|----------|
-| Python | 3.8 - 3.11 |
-| Docker Desktop | 最新版 |
-| Java | 11 (Flink依赖) |
-| pip | 最新版 |
-
-### 2. 安装依赖
+### 1. 环境要求
 
 ```bash
-# 创建虚拟环境
-python -m venv .venv
-.venv\Scripts\activate
+# 检查版本
+python --version     # >= 3.8
+docker --version     # 最新版
+java -version        # 11
+```
 
-# 安装Python依赖
+### 2. 安装步骤
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/gaopeiling/pyflink_kafka_demo.git
+cd pyflink_kafka_demo
+
+# 2. 创建虚拟环境
+python -m venv .venv
+source .venv/bin/activate      # Linux/Mac
+.venv\Scripts\activate          # Windows
+
+# 3. 安装依赖
 pip install kafka-python mysql-connector-python apache-flink==1.18.0
+
 ```
 
 ### 3. 下载Kafka连接器
 下载 flink-sql-connector-kafka-3.2.0-1.18.jar 并放入 libs/ 目录。
 [下载地址](https://repo.maven.apache.org/maven2/org/apache/flink/flink-sql-connector-kafka/3.2.0-1.18/)
 
-## 🏃 快速开始
+### 4. 启动系统
 
-### 第一步：启动基础设施
-```bash
-start-all.bat
-```
-这会自动：
-启动 Zookeeper、Kafka、MySQL 容器
-创建 Kafka Topics (stock_tick_raw, kline_result)
-创建 MySQL 表 (kline_1min)
+| 步骤 | 操作 | 说明 |
+| :---: | :--- | :--- |
+| 1 | `start-all.bat` | 启动Docker容器 + 初始化Topic/表 |
+| 2 | `python producer.py` | 启动数据生产者 |
+| 3 | `python flink_job.py` | 启动Flink作业 |
+| 4 | `python mysql_consumer.py` | 启动MySQL消费者 |
 
-### 第二步：启动三个Python程序（分别开三个终端）
-终端1 - 数据生产者：
-```bash
-python producer.py
-```
-终端2 - Flink作业：
-```bash
-python flink_job.py
-```
-终端3 - MySQL消费者：
-```bash
-python mysql_consumer.py
-```
-### 第三步：验证结果
+### 5. 验证结果
 ```bash
 docker exec mysql mysql -uroot -proot123 -e "USE stock_db; SELECT * FROM kline_1min ORDER BY window_start DESC LIMIT 10;"
 ```
@@ -178,27 +218,33 @@ environment:
   KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
 ```
 ### Q: 消费者收不到数据？
-确认三个程序都在运行，等待1分钟后查询MySQL。
+1.确认三个Python程序都在运行
+2.等待1分钟（窗口触发）
+3.检查Kafka消息：
 ```bash
-docker exec mysql mysql -uroot -proot123 -e "USE stock_db; SELECT * FROM kline_1min ORDER BY window_start DESC LIMIT 10;"
+docker exec kafka kafka-console-consumer --topic kline_result --bootstrap-server localhost:9092
 ```
 
 ---
 ## 📝 项目亮点
-完整的数据管道：从生产到消费，覆盖数据全生命周期
-
-真实业务场景：模拟金融领域K线计算
-
-技术栈全面：Flink + Kafka + MySQL + Docker
-
-代码简洁：使用 Table API，50行核心代码完成聚合
-
-一键部署：提供完整的启动脚本
+| 步骤 | 亮点 | 说明 |
+| :---: | :--- | :--- |
+| 1 | 🎯 真实业务 | 模拟金融领域K线计算，贴近生产场景 |
+| 2 | 🔧 技术全面 | Flink + Kafka + MySQL + Docker 完整技术栈 |
+| 3 | 📦 开箱即用 | 一键启动脚本，3分钟上手 |
+| 4 | 💡 代码简洁 | Table API，50行核心代码完成聚合 |
+| 5 | 📊 数据完整 | 从生产到消费，覆盖数据全生命周期 |
 
 ---
 ## 📄 License
-MIT
+MIT License © 2026 Gao Peiling
 
 ---
 ## 📧 联系方式
 如有问题，欢迎交流！
+
+---
+## 参考资源
+[Apache Flink 官方文档](https://flink.apache.org/)
+[PyFlink 文档](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/python/overview/)
+[Kafka 文档](https://kafka.apache.org/43/getting-started/introduction/)

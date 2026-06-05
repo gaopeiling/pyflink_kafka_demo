@@ -86,28 +86,23 @@ start-all.bat
 
 ### 第二步：启动三个Python程序（分别开三个终端）
 终端1 - 数据生产者：
-```
-bash
+```bash
 python producer.py
 ```
 终端2 - Flink作业：
-```
-bash
+```bash
 python flink_job.py
 ```
 终端3 - MySQL消费者：
-```
-bash
+```bash
 python mysql_consumer.py
 ```
 ### 第三步：验证结果
-```
-bash
+```bash
 docker exec mysql mysql -uroot -proot123 -e "USE stock_db; SELECT * FROM kline_1min ORDER BY window_start DESC LIMIT 10;"
 ```
 ### 停止服务
-```
-bash
+```bash
 stop-all.bat
 ```
 ---
@@ -131,8 +126,7 @@ t_env.execute_sql("""
 """)
 ```
 ### 2. Kafka生产者 (模拟数据)
-```
-python
+```python
 def generate_tick():
     return {
         'symbol': random.choice(['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']),
@@ -142,8 +136,7 @@ def generate_tick():
     }
 ```
 ### 3. MySQL消费者
-```
-python
+```python
 consumer = KafkaConsumer(
     'kline_result',
     bootstrap_servers='localhost:9092',
@@ -152,8 +145,7 @@ consumer = KafkaConsumer(
 ```
 ---
 ## 📈 数据流示意
-```
-text
+```text
 输入数据 (stock_tick_raw)
 ┌─────────────────────────────────────────┐
 │ {"symbol":"AAPL","price":178.5,"volume":2300} │
@@ -173,8 +165,7 @@ text
 ---
 ## 🛠️ 常见问题
 ### Q: Kafka容器无法启动？
-```
-bash
+```bash
 #清理数据卷后重启
 docker-compose down
 docker volume rm pyflink_kafka_demo_kafka_data
@@ -182,14 +173,13 @@ docker-compose up -d
 ```
 ### Q: Flink作业报 NoBrokersAvailable？
 检查 docker-compose.yml 中 Kafka 的 KAFKA_ADVERTISED_LISTENERS 配置：
-
-yaml
+```yaml
 environment:
   KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+```
 ### Q: 消费者收不到数据？
 确认三个程序都在运行，等待1分钟后查询MySQL。
-```
-bash
+```bash
 docker exec mysql mysql -uroot -proot123 -e "USE stock_db; SELECT * FROM kline_1min ORDER BY window_start DESC LIMIT 10;"
 ```
 

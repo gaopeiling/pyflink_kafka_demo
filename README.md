@@ -1,26 +1,41 @@
 # Flink + Kafka + MySQL 实时股票K线计算系统
 
-一个基于 PyFlink、Kafka 和 MySQL 的实时股票行情处理系统，实现1分钟K线聚合计算。
-
-# Flink + Kafka + MySQL 实时股票K线计算系统
-
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org/)
 [![Flink](https://img.shields.io/badge/Flink-1.18-orange.svg)](https://flink.apache.org/)
 [![Kafka](https://img.shields.io/badge/Kafka-7.4-black.svg)](https://kafka.apache.org/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://mysql.com/)
 
-## 📋 目录
+## 目录
 
-- [项目简介](#项目简介)
-- [系统架构](#系统架构)
-- [技术栈](#技术栈)
-- [快速开始](#快速开始)
-- [核心代码](#核心代码)
-- [数据流说明](#数据流说明)
-- [常见问题](#常见问题)
-- [项目亮点](#项目亮点)
-- [参考资源](#参考资源)
+- [Flink + Kafka + MySQL 实时股票K线计算系统](#flink--kafka--mysql-实时股票k线计算系统)
+  - [目录](#目录)
+  - [项目简介](#项目简介)
+    - [适用场景](#适用场景)
+  - [系统架构](#系统架构)
+  - [技术栈](#技术栈)
+  - [项目结构](#项目结构)
+  - [快速开始](#快速开始)
+    - [1. 环境要求](#1-环境要求)
+    - [2. 安装步骤](#2-安装步骤)
+    - [3. 下载Kafka连接器](#3-下载kafka连接器)
+    - [4. 启动系统](#4-启动系统)
+    - [5. 验证结果](#5-验证结果)
+    - [停止服务](#停止服务)
+  - [核心代码](#核心代码)
+    - [1. Flink Table API 实现K线聚合](#1-flink-table-api-实现k线聚合)
+    - [2. Kafka生产者 (模拟数据)](#2-kafka生产者-模拟数据)
+    - [3. MySQL消费者](#3-mysql消费者)
+  - [数据流说明](#数据流说明)
+  - [常见问题](#常见问题)
+    - [Q: Kafka容器无法启动？](#q-kafka容器无法启动)
+    - [Q: Flink作业报 NoBrokersAvailable？](#q-flink作业报-nobrokersavailable)
+    - [Q: 消费者收不到数据？](#q-消费者收不到数据)
+  - [项目亮点](#项目亮点)
+  - [License](#license)
+  - [参考资源](#参考资源)
+  - [联系方式](#联系方式)
+
 ---
 
 ## 项目简介
@@ -130,12 +145,12 @@ pip install kafka-python mysql-connector-python apache-flink==1.18.0
 
 ### 4. 启动系统
 
-| 步骤 | 操作 | 说明 |
-| :---: | :--- | :--- |
-| 1 | `start-all.bat` | 启动Docker容器 + 初始化Topic/表 |
-| 2 | `python producer.py` | 启动数据生产者 |
-| 3 | `python flink_job.py` | 启动Flink作业 |
-| 4 | `python mysql_consumer.py` | 启动MySQL消费者 |
+| 步骤 | 操作                         | 说明 |
+| :---: |:---------------------------| :--- |
+| 1 | `.\scripts\start-all.bat`  | 启动Docker容器 + 初始化Topic/表 |
+| 2 | `python .\src\producer.py` | 启动数据生产者 |
+| 3 | `python .\src\flink_job.py`      | 启动Flink作业 |
+| 4 | `python .\src\mysql_consumer.py` | 启动MySQL消费者 |
 
 ### 5. 验证结果
 ```bash
